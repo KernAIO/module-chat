@@ -7,7 +7,7 @@ import type {
   MessageWithChannel,
   RichDoc,
   ThreadView,
-} from '../contract/index.js'
+} from '@kernhq/module-chat/contract'
 import type { ChatApi } from './api.js'
 
 export interface UserLite {
