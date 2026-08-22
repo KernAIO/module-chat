@@ -6,6 +6,17 @@
  * application, which owns the design system — the same split the tracker uses. A host imports this,
  * hands the store an API client and a realtime connection, and renders whatever it likes on top.
  */
+
+export type {
+  Channel,
+  ChannelSection,
+  ChannelView,
+  ChatContract,
+  Message,
+  MessageWithChannel,
+  RichDoc,
+  ThreadView,
+} from '../contract/index.js'
 export { type ChatApi, createChatClient } from './api.js'
 export {
   type ChatMessageKey,
@@ -30,13 +41,3 @@ export {
   type RealtimeLike,
   type UserLite,
 } from './store.svelte.js'
-export type {
-  Channel,
-  ChannelSection,
-  ChannelView,
-  ChatContract,
-  Message,
-  MessageWithChannel,
-  RichDoc,
-  ThreadView,
-} from '../contract/index.js'
