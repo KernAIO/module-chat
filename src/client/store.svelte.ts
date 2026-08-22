@@ -39,6 +39,11 @@ export interface MessageWindow {
   hasMoreBefore: boolean
   hasMoreAfter: boolean
   loading: boolean
+  /**
+   * Set when the transcript could not be loaded. Without it a failed request leaves `loading` true
+   * for ever and the reader watches a skeleton that will never become a conversation.
+   */
+  error?: string | null
 }
 
 const TYPING_TTL_MS = 4000
@@ -129,6 +134,9 @@ export class ChatStore {
     await this.api.channels.leave({ workspaceId: this.workspaceId, channelId: channelId as Id })
     this.channels = this.channels.filter((c) => c.id !== channelId)
     delete this.windows[channelId]
+    // stop receiving messages for a channel we are no longer in
+    this.realtime?.unsubscribe(`chat:${channelId}`)
+    if (this.activeChannelId === channelId) this.activeChannelId = null
   }
 
   async openDm(userId: string): Promise<ChannelView> {
@@ -178,26 +186,59 @@ export class ChatStore {
   // ---------------------------------------------------------------- messages
 
   window(channelId: string): MessageWindow {
-    return this.windows[channelId] ?? { items: [], hasMoreBefore: false, hasMoreAfter: false, loading: false }
+    return (
+      this.windows[channelId] ?? {
+        items: [],
+        hasMoreBefore: false,
+        hasMoreAfter: false,
+        loading: false,
+        error: null,
+      }
+    )
+  }
+
+  /** Try a transcript again after it failed. */
+  async retryChannel(channelId: string): Promise<void> {
+    delete this.windows[channelId]
+    await this.openChannel(channelId)
   }
 
   async openChannel(channelId: string): Promise<void> {
     this.activeChannelId = channelId
     this.realtime?.subscribe(`chat:${channelId}`)
-    if (!this.windows[channelId]) {
-      this.windows[channelId] = { items: [], hasMoreBefore: false, hasMoreAfter: false, loading: true }
-      const res = await this.api.messages.list({
-        workspaceId: this.workspaceId,
-        channelId: channelId as Id,
-        limit: 50,
-      })
+    const existing = this.windows[channelId]
+    // a window that failed is worth retrying; one that loaded is not worth refetching
+    if (!existing || existing.error) {
       this.windows[channelId] = {
-        items: res.items,
-        hasMoreBefore: res.hasMoreBefore,
-        hasMoreAfter: res.hasMoreAfter,
-        loading: false,
+        items: [],
+        hasMoreBefore: false,
+        hasMoreAfter: false,
+        loading: true,
+        error: null,
       }
-      this.requestUsers(res.items.map((m) => m.authorId).filter((x): x is UserId => !!x))
+      try {
+        const res = await this.api.messages.list({
+          workspaceId: this.workspaceId,
+          channelId: channelId as Id,
+          limit: 50,
+        })
+        this.windows[channelId] = {
+          items: res.items,
+          hasMoreBefore: res.hasMoreBefore,
+          hasMoreAfter: res.hasMoreAfter,
+          loading: false,
+          error: null,
+        }
+        this.requestUsers(res.items.map((m) => m.authorId).filter((x): x is UserId => !!x))
+      } catch (error) {
+        this.windows[channelId] = {
+          items: [],
+          hasMoreBefore: false,
+          hasMoreAfter: false,
+          loading: false,
+          error: error instanceof Error ? error.message : 'failed',
+        }
+      }
     }
     if (!this.channel(channelId)) {
       try {
