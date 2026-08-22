@@ -1,12 +1,12 @@
 {
-  "name": "@kernalo/module-chat",
+  "name": "@kernaio/module-chat",
   "version": "0.1.0",
   "description": "Kern chat module: channels, DMs, threads, reactions, mentions, read-state, search (server + Svelte client)",
   "license": "AGPL-3.0-only",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/KernALO/modules",
+    "url": "https://github.com/KernAIO/modules",
     "directory": "packages/chat"
   },
   "publishConfig": {
@@ -56,9 +56,9 @@
     }
   },
   "dependencies": {
-    "@kernalo/contracts": "^0.1.0",
-    "@kernalo/kernel": "^0.1.0",
-    "@kernalo/sdk": "^0.1.0",
+    "@kernaio/contracts": "^0.1.0",
+    "@kernaio/kernel": "^0.1.0",
+    "@kernaio/sdk": "^0.1.0",
     "@orpc/contract": "^1.15.0",
     "@orpc/server": "^1.15.0",
     "@tanstack/svelte-virtual": "^3.13.0",

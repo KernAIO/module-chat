@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { KernError, type Kernel, type RequestContext, requires, workspaceScoped } from '@kernalo/kernel'
+import { KernError, type Kernel, type RequestContext, requires, workspaceScoped } from '@kernaio/kernel'
 import { implement } from '@orpc/server'
 import { and, eq, isNull } from 'drizzle-orm'
 import { chatContract, MODULE_ID } from '../contract/index.js'

@@ -1,4 +1,4 @@
-import { Id, ObjectRef, Timestamp, UserId, WorkspaceId } from '@kernalo/contracts'
+import { Id, ObjectRef, Timestamp, UserId, WorkspaceId } from '@kernaio/contracts'
 import { z } from 'zod'
 
 export const MODULE_ID = 'chat'

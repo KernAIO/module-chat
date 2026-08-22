@@ -1,4 +1,4 @@
-import { createModuleClient, type KernClientOptions } from '@kernalo/sdk'
+import { createModuleClient, type KernClientOptions } from '@kernaio/sdk'
 import type { ContractRouterClient } from '@orpc/contract'
 import type { ChatContract } from '../contract/index.js'
 

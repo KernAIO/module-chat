@@ -1,4 +1,4 @@
-import type { core } from '@kernalo/contracts'
+import type { core } from '@kernaio/contracts'
 import {
   baseContract,
   defineEvent,
@@ -9,7 +9,7 @@ import {
   page,
   UserId,
   WorkspaceId,
-} from '@kernalo/contracts'
+} from '@kernaio/contracts'
 import { z } from 'zod'
 import {
   Channel,

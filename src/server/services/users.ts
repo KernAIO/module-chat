@@ -1,4 +1,4 @@
-import type { Kernel } from '@kernalo/kernel'
+import type { Kernel } from '@kernaio/kernel'
 
 export interface UserLite {
   id: string

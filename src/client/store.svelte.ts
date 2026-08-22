@@ -1,4 +1,4 @@
-import type { Id, ServerMessage, UserId, WorkspaceId } from '@kernalo/contracts'
+import type { Id, ServerMessage, UserId, WorkspaceId } from '@kernaio/contracts'
 import type {
   Channel,
   ChannelSection,

@@ -1,4 +1,4 @@
-import type { Kernel } from '@kernalo/kernel'
+import type { Kernel } from '@kernaio/kernel'
 import { ChannelService } from './channels.js'
 import { MessageService } from './messages.js'
 import { UserDirectory } from './users.js'

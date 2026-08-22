@@ -14,7 +14,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 
-// `pgSchema` directly (not `moduleSchema` from @kernalo/kernel) so drizzle-kit can load this file standalone
+// `pgSchema` directly (not `moduleSchema` from @kernaio/kernel) so drizzle-kit can load this file standalone
 export const schema = pgSchema('mod_chat')
 
 const tsvector = customType<{ data: string }>({ dataType: () => 'tsvector' })

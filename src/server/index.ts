@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { type core, Id, ObjectRef, UserId, WorkspaceId } from '@kernalo/contracts'
-import { defineModule, defineServerModule, type Kernel } from '@kernalo/kernel'
+import { type core, Id, ObjectRef, UserId, WorkspaceId } from '@kernaio/contracts'
+import { defineModule, defineServerModule, type Kernel } from '@kernaio/kernel'
 import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import {
