@@ -116,7 +116,7 @@ export async function reactionsFor(tx: Tx, messageIds: string[]): Promise<Map<st
   if (!messageIds.length) return map
   const rows = await tx.execute<{ message_id: string; emoji: string; count: string; user_ids: string[] }>(sql`
     select message_id, emoji, count(*)::int as count, array_agg(user_id order by created_at) as user_ids
-    from mod_chat.message_reactions where message_id = any(${messageIds}::uuid[])
+    from mod_chat.message_reactions where message_id = any(${sql.param(messageIds)}::uuid[])
     group by message_id, emoji order by min(created_at)`)
   for (const r of rows.rows) {
     const list = map.get(r.message_id) ?? []

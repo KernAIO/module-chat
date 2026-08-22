@@ -940,7 +940,7 @@ export class ChannelService {
     const res = await tx.execute<{ user_id: string; unread: string; mentions: string }>(sql`
       select cm.user_id, coalesce(sum(cm.unread_count),0)::int as unread, coalesce(sum(cm.mention_count),0)::int as mentions
       from mod_chat.channel_members cm join mod_chat.channels c on c.id = cm.channel_id
-      where cm.workspace_id = ${workspaceId} and cm.user_id = any(${userIds}::uuid[]) and cm.muted = false and c.archived_at is null
+      where cm.workspace_id = ${workspaceId} and cm.user_id = any(${sql.param(userIds)}::uuid[]) and cm.muted = false and c.archived_at is null
       group by cm.user_id`)
     for (const u of userIds) map.set(u, { unread: 0, mentions: 0 })
     for (const r of res.rows) map.set(r.user_id, { unread: Number(r.unread), mentions: Number(r.mentions) })

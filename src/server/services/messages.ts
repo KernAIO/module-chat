@@ -367,7 +367,7 @@ export class MessageService {
         }
         // unread / mention counters for everyone but the author
         let affected: AffectedMember[] = []
-        const mentionCond = sql`(${mentions.channel} or user_id = any(${mentions.users}::uuid[]))`
+        const mentionCond = sql`(${mentions.channel} or user_id = any(${sql.param(mentions.users)}::uuid[]))`
         if (counts && (!root || input.broadcast)) {
           const r = await tx.execute<AffectedMember>(sql`
           update mod_chat.channel_members set unread_count = unread_count + 1, mention_count = mention_count + (case when ${mentionCond} then 1 else 0 end)
@@ -622,7 +622,7 @@ export class MessageService {
         const res = await tx.execute<{ user_id: string }>(sql`
         update mod_chat.channel_members set
           unread_count = greatest(unread_count - (case when ${top} then 1 else 0 end), 0),
-          mention_count = greatest(mention_count - (case when (${m.channel} or user_id = any(${m.users}::uuid[])) then 1 else 0 end), 0)
+          mention_count = greatest(mention_count - (case when (${m.channel} or user_id = any(${sql.param(m.users)}::uuid[])) then 1 else 0 end), 0)
         where channel_id = ${row.channelId} and last_read_seq < ${row.seq} and user_id is distinct from ${row.authorId}::uuid and ${row.kind !== 'system'}
         returning user_id`)
         return { row, affectedIds: res.rows.map((r) => r.user_id) }
@@ -655,8 +655,7 @@ export class MessageService {
       )
       await this.kernel
         .call('core.search.remove', {
-          workspaceId,
-          object: { module: MODULE_ID, type: 'message', id: messageId },
+          refs: [{ workspaceId, object: { module: MODULE_ID, type: 'message', id: messageId } }],
         })
         .catch(() => {})
     }
@@ -872,7 +871,7 @@ export class MessageService {
       },
     }
     await this.kernel
-      .call('core.search.index', doc)
+      .call('core.search.index', { documents: [doc] })
       .catch((err) => this.kernel.log.debug({ err: (err as Error).message }, 'search index failed'))
   }
 
