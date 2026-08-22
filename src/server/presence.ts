@@ -1,4 +1,4 @@
-import type { Kernel } from '@kernaio/kernel'
+import type { Kernel } from '@kernhq/kernel'
 
 /**
  * Presence lives in Valkey under `presence:<userId>` with a 60s TTL, refreshed by the realtime

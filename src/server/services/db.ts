@@ -1,4 +1,4 @@
-import type { Kernel, Tx } from '@kernaio/kernel'
+import type { Kernel, Tx } from '@kernhq/kernel'
 import { sql } from 'drizzle-orm'
 import type {
   Channel,

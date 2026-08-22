@@ -1,6 +1,6 @@
-import type { core, Principal } from '@kernaio/contracts'
-import { channel as rtChannel } from '@kernaio/contracts'
-import { KernError, type Kernel, type Tx, uuidv7 } from '@kernaio/kernel'
+import type { core, Principal } from '@kernhq/contracts'
+import { channel as rtChannel } from '@kernhq/contracts'
+import { KernError, type Kernel, type Tx, uuidv7 } from '@kernhq/kernel'
 import { and, asc, desc, eq, sql } from 'drizzle-orm'
 import type {
   Mentions,
