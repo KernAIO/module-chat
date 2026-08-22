@@ -1,4 +1,4 @@
-import type { RichDoc } from '@kernhq/module-chat/contract'
+import type { RichDoc } from '../contract/index.js'
 
 /**
  * Render a Tiptap/ProseMirror JSON document to sanitised HTML for read-only display.

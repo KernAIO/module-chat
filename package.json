@@ -15,7 +15,7 @@
   "files": [
     "dist",
     "migrations",
-    "src/client"
+    "src/contract"
   ],
   "exports": {
     "./contract": {
@@ -27,16 +27,6 @@
       "types": "./dist/server/index.d.ts",
       "import": "./dist/server/index.js",
       "default": "./dist/server/index.js"
-    },
-    "./client": {
-      "types": "./src/client/index.ts",
-      "svelte": "./src/client/index.ts",
-      "default": "./src/client/index.ts"
-    },
-    "./client/*": {
-      "types": "./src/client/*",
-      "svelte": "./src/client/*",
-      "default": "./src/client/*"
     },
     "./migrations": "./migrations"
   },
