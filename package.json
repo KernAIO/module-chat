@@ -1,6 +1,6 @@
 {
   "name": "@kernhq/module-chat",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Kern chat module: channels, DMs, threads, reactions, mentions, read-state, search (server + Svelte client)",
   "license": "AGPL-3.0-only",
   "type": "module",
