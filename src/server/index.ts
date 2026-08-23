@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { type core, Id, ObjectRef, UserId, WorkspaceId } from '@kernhq/contracts'
-import { defineModule, defineServerModule, type Kernel } from '@kernhq/kernel'
+import { defineModule, defineServerModule, type Kernel, packageVersion } from '@kernhq/kernel'
 import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import {
@@ -33,7 +33,7 @@ export const chatModule = defineServerModule({
   definition: defineModule({
     id: MODULE_ID,
     name: 'Chat',
-    version: '0.1.0',
+    version: packageVersion(import.meta.url),
     description: 'Channels, direct messages, threads, reactions, mentions, read-state and search',
     icon: 'message-square',
     core: false,
