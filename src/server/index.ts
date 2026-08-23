@@ -5,6 +5,7 @@ import { defineModule, defineServerModule, type Kernel, packageVersion } from '@
 import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import {
+  chatContract,
   chatEvents,
   chatNotificationTypes,
   chatObjectTypes,
@@ -43,6 +44,8 @@ export const chatModule = defineServerModule({
     notificationTypes: chatNotificationTypes,
     objectTypes: chatObjectTypes,
   }),
+  /** Attached so the developer panel can check the router against what was promised. */
+  contract: chatContract,
   schema,
   migrationsFolder: join(dirname(fileURLToPath(import.meta.url)), '../../migrations'),
   router: chatRouter,
