@@ -1,6 +1,6 @@
 {
   "name": "@kernhq/module-chat",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Kern chat module: channels, DMs, threads, reactions, mentions, read-state, search (server + Svelte client)",
   "homepage": "https://kernaio.com",
   "license": "AGPL-3.0-only",
