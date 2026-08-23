@@ -139,6 +139,47 @@ export class ChatStore {
     if (this.activeChannelId === channelId) this.activeChannelId = null
   }
 
+  /**
+   * A slash command, run by the server.
+   *
+   * It lives here rather than in the composer because every command that does anything changes
+   * what the rail shows: `/leave` takes you out of a channel, `/mute` changes your membership,
+   * `/topic` renames what the header says. A composer calling the API directly would post the
+   * command and leave the sidebar describing a state that no longer exists.
+   *
+   * The `ephemeral` line comes back in the server's own English. Callers translate the commands
+   * they know and fall back to it for the ones they do not, which is what keeps this working when
+   * commands become pluggable.
+   */
+  async runCommand(
+    channelId: string,
+    command: string,
+    text: string,
+  ): Promise<{ handled: boolean; ephemeral: string | null }> {
+    const res = await this.api.commands.run({
+      workspaceId: this.workspaceId,
+      channelId: channelId as Id,
+      command,
+      text,
+    })
+    if (!res.handled) return { handled: false, ephemeral: res.ephemeral }
+
+    // A command that posts (`/shrug`, `/me`) returns its message, and the sender sees it now
+    // rather than when realtime gets round to it — the same as `post`.
+    if (res.message) this.applyMessageCreated(res.message)
+
+    // `/leave` is the one that removes the channel outright; the rest only change what it says.
+    if (command.replace(/^\//, '').toLowerCase() === 'leave') {
+      this.channels = this.channels.filter((c) => c.id !== channelId)
+      delete this.windows[channelId]
+      this.realtime?.unsubscribe(`chat:${channelId}`)
+      if (this.activeChannelId === channelId) this.activeChannelId = null
+    } else {
+      await this.loadChannels()
+    }
+    return { handled: true, ephemeral: res.ephemeral }
+  }
+
   async openDm(userId: string): Promise<ChannelView> {
     const view = await this.api.channels.openDm({ workspaceId: this.workspaceId, userId: userId as UserId })
     this.upsertChannel(view)
