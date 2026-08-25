@@ -19,9 +19,22 @@ import SearchResults from './SearchResults.svelte'
  * so the results are where the list was and never below the fold.
  */
 
-const workspaceSlug = $derived(navigation.workspaceSlug)
-const workspace = $derived(session.workspaces.find((w) => w.slug === workspaceSlug))
-const store = $derived(getChatStore(workspace?.id ?? '', session.user?.id ?? ''))
+/**
+ * The shell passes these — `SidebarProps` — and they are the ones to use.
+ *
+ * Reading `navigation` here instead looks equivalent and is not: the shell fills that singleton
+ * from an `$effect`, which runs *after* the first render, so the sidebar's first paint would build
+ * a store keyed on an empty workspace id and show no conversations at all.
+ */
+interface Props {
+  workspaceId: string
+  workspaceSlug: string
+  pathname: string
+  segment: string
+}
+const { workspaceId, workspaceSlug }: Props = $props()
+
+const store = $derived(getChatStore(workspaceId, session.user?.id ?? ''))
 
 /**
  * `navigation.search` is a flattened query string, so a key that is absent reads as `undefined`
