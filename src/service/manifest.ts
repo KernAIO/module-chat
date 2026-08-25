@@ -1,4 +1,4 @@
-import { chatModule } from '@kernhq/module-chat/server'
+import { chatModule } from '../server/index.js'
 
 /**
  * What this image contains, printed as JSON.

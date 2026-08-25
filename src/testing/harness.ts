@@ -15,13 +15,13 @@ import { fileURLToPath } from 'node:url'
 import { ANONYMOUS, type MembershipSummary, type Principal } from '@kernhq/contracts'
 import type { Kernel, RequestContext } from '@kernhq/kernel'
 import { uuidv7 } from '@kernhq/kernel'
-import type { ChatContract } from '@kernhq/module-chat/contract'
-import { chatContract } from '@kernhq/module-chat/contract'
+import type { ChatContract } from '../contract/index.js'
+import { chatContract } from '../contract/index.js'
 import { createScratchDatabase } from '@kernhq/testing'
 import type { ContractRouterClient } from '@orpc/contract'
 import { createRouterClient } from '@orpc/server'
 import { config as loadDotenv } from 'dotenv'
-import { type ChatService, createChatService } from '../service.js'
+import { type ChatService, createChatService } from '../service/service.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 loadDotenv({ path: resolve(here, '../../.env'), quiet: true })

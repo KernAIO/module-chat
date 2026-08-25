@@ -34,6 +34,9 @@ COPY --from=build --chown=kern:kern /app/package.json ./package.json
 
 USER kern
 EXPOSE 4100
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
+# --start-period matters: Coolify gates a release on Docker's health status and polls about ten
+# times. Without it the first probe fires before the server has bound, and every later poll re-reads
+# that same stale failure — a working container, rolled back.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=20s \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||4100)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/service/main.js"]

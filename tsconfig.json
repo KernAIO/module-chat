@@ -1,6 +1,19 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": { "rootDir": "src", "outDir": "dist", "types": ["node"] },
-  "include": ["src/contract", "src/server"],
-  "exclude": ["src/**/__tests__", "src/**/*.test.ts"]
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src/contract",
+    "src/server",
+    "src/service"
+  ],
+  "exclude": [
+    "src/**/__tests__",
+    "src/**/*.test.ts"
+  ]
 }

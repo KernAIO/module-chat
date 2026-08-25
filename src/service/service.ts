@@ -1,6 +1,6 @@
 import { channel as chan } from '@kernhq/contracts'
 import { createHttpServer, createKernel, type Kernel, rtSubject } from '@kernhq/kernel'
-import { chatModule, chatServices } from '@kernhq/module-chat/server'
+import { chatModule, chatServices } from '../server/index.js'
 import type { FastifyInstance } from 'fastify'
 import { type ChatEnv, loadChatEnv } from './env.js'
 import { createGateway, type Gateway } from './gateway.js'
