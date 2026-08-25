@@ -18,14 +18,15 @@ export type {
   ThreadView,
 } from '../contract/index.js'
 export { type ChatApi, createChatClient } from './api.js'
+export { __setChatApi, getChatApi } from './api-instance.js'
 export {
   type ChatMessageKey,
   chatMessageBundles,
   en as chatMessagesEn,
-  registerChatMessages,
-  setChatLocale,
   t as chatText,
 } from './i18n.js'
+export { chatClientModule, chatClientModule as default } from './module.js'
+export { CHAT_PERMISSIONS, type ChatPermission, canChat } from './permissions.js'
 export {
   avatarColorIndex,
   dayKey,

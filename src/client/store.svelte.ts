@@ -8,7 +8,7 @@ import type {
   RichDoc,
   ThreadView,
 } from '../contract/index.js'
-import type { ChatApi } from './api.js'
+import type { ChatApi } from './api-instance.js'
 
 export interface UserLite {
   id: string
