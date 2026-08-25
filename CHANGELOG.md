@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.4
+
+### Patch Changes
+
+- Merge remote-tracking branch 'origin/main'
+
 ## 0.4.3
 
 ### Patch Changes
