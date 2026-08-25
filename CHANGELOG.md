@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.6
+
+### Patch Changes
+
+- chore: refresh the lockfile after the revert
+
 ## 0.4.5
 
 ### Patch Changes
