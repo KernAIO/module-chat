@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.1
+
+### Patch Changes
+
+- fix(deps): reach the framework that was just published
+
 ## 0.4.0
 
 ### Minor Changes
