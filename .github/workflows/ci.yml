@@ -13,17 +13,7 @@ jobs:
       # 127.0.0.1, never localhost: a runner resolves localhost to ::1 first, where the published
       # port is not listening, and the client does not retry over IPv4.
       DATABASE_URL: postgres://kern:kern@127.0.0.1:5432/kern
-      # The gateway keeps presence and unread counts in Valkey, so its tests need a real one.
-      VALKEY_URL: redis://127.0.0.1:6379
     services:
-      valkey:
-        image: valkey/valkey:8-alpine
-        ports: ['6379:6379']
-        options: >-
-          --health-cmd "valkey-cli ping"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 20
       # The suites create a scratch database per file, apply the migrations and prove row-level
       # security as an unprivileged role. Nothing is mocked, so without this they fail to start
       # rather than quietly passing.
