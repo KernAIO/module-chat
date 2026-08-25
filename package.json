@@ -51,7 +51,7 @@
     "db:generate": "drizzle-kit generate"
   },
   "peerDependencies": {
-    "@kernhq/ui": "^0.7.0",
+    "@kernhq/ui": "^0.8.0",
     "@tanstack/svelte-query": "^6.1.0",
     "svelte": "^5.46.0"
   },
@@ -68,8 +68,8 @@
   },
   "dependencies": {
     "@kernhq/contracts": "^0.5.1",
-    "@kernhq/kernel": "^0.6.0",
-    "@kernhq/sdk": "^0.1.0",
+    "@kernhq/kernel": "^0.7.0",
+    "@kernhq/sdk": "^0.1.5",
     "@orpc/contract": "^1.15.0",
     "@orpc/server": "^1.15.0",
     "@tanstack/svelte-virtual": "^3.13.0",
@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@kernhq/tsconfig": "^0.1.0",
-    "@kernhq/ui": "^0.7.0",
+    "@kernhq/ui": "^0.8.0",
     "@tanstack/svelte-query": "^6.1.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.15.0",
