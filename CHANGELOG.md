@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.3
+
+### Patch Changes
+
+- chore: refresh the lockfile for the service dependencies
+
 ## 0.4.2
 
 ### Patch Changes
