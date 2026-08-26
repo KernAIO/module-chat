@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.7
+
+### Patch Changes
+
+- fix: declare @kernhq/kernel and @kernhq/contracts as peerDependencies
+
 ## 0.4.6
 
 ### Patch Changes
