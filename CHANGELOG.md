@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.13
+
+### Patch Changes
+
+- 618de43: Peer @kernhq/kernel ^0.9.1 and @kernhq/ui ^0.14.0 — the framework published; the module's ranges follow so one install resolves a single consistent kernel.
+
 ## 0.4.12
 
 ### Patch Changes
