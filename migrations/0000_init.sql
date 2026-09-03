@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS "mod_chat";
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."bookmarks" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."bookmarks" (
 	"user_id" uuid NOT NULL,
 	"message_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE "mod_chat"."bookmarks" (
 	CONSTRAINT "bookmarks_user_id_message_id_pk" PRIMARY KEY("user_id","message_id")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."channel_members" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."channel_members" (
 	"channel_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE "mod_chat"."channel_members" (
 	CONSTRAINT "channel_members_channel_id_user_id_pk" PRIMARY KEY("channel_id","user_id")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."channel_sections" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."channel_sections" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE "mod_chat"."channel_sections" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."channels" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."channels" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"type" text NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE "mod_chat"."channels" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."favorites" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."favorites" (
 	"workspace_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
 	"channel_id" uuid NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "mod_chat"."favorites" (
 	CONSTRAINT "favorites_user_id_channel_id_pk" PRIMARY KEY("user_id","channel_id")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."message_reactions" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."message_reactions" (
 	"message_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE "mod_chat"."message_reactions" (
 	CONSTRAINT "message_reactions_message_id_user_id_emoji_pk" PRIMARY KEY("message_id","user_id","emoji")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."messages" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."messages" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"channel_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE "mod_chat"."messages" (
 	"search" "tsvector" GENERATED ALWAYS AS (to_tsvector('simple', coalesce(body_text, ''))) STORED
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."pins" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."pins" (
 	"message_id" uuid PRIMARY KEY NOT NULL,
 	"channel_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE "mod_chat"."pins" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."section_channels" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."section_channels" (
 	"section_id" uuid NOT NULL,
 	"channel_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE "mod_chat"."section_channels" (
 	CONSTRAINT "section_channels_section_id_channel_id_pk" PRIMARY KEY("section_id","channel_id")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."thread_participants" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."thread_participants" (
 	"thread_root_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE "mod_chat"."thread_participants" (
 	CONSTRAINT "thread_participants_thread_root_id_user_id_pk" PRIMARY KEY("thread_root_id","user_id")
 );
 --> statement-breakpoint
-CREATE TABLE "mod_chat"."webhooks" (
+CREATE TABLE IF NOT EXISTS "mod_chat"."webhooks" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"channel_id" uuid NOT NULL,
@@ -131,23 +131,23 @@ CREATE TABLE "mod_chat"."webhooks" (
 	"revoked_at" timestamp with time zone
 );
 --> statement-breakpoint
-CREATE INDEX "bookmarks_ws_user_idx" ON "mod_chat"."bookmarks" USING btree ("workspace_id","user_id","created_at");--> statement-breakpoint
-CREATE INDEX "channel_members_ws_user_idx" ON "mod_chat"."channel_members" USING btree ("workspace_id","user_id");--> statement-breakpoint
-CREATE INDEX "channel_sections_ws_user_idx" ON "mod_chat"."channel_sections" USING btree ("workspace_id","user_id","position");--> statement-breakpoint
-CREATE UNIQUE INDEX "channels_ws_slug_uq" ON "mod_chat"."channels" USING btree ("workspace_id","slug") WHERE slug is not null;--> statement-breakpoint
-CREATE UNIQUE INDEX "channels_ws_dmkey_uq" ON "mod_chat"."channels" USING btree ("workspace_id","dm_key") WHERE dm_key is not null;--> statement-breakpoint
-CREATE UNIQUE INDEX "channels_ws_object_uq" ON "mod_chat"."channels" USING btree ("workspace_id","object_module","object_type","object_id") WHERE object_id is not null;--> statement-breakpoint
-CREATE INDEX "channels_ws_type_idx" ON "mod_chat"."channels" USING btree ("workspace_id","type","archived_at");--> statement-breakpoint
-CREATE INDEX "favorites_ws_user_idx" ON "mod_chat"."favorites" USING btree ("workspace_id","user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "messages_channel_seq_uq" ON "mod_chat"."messages" USING btree ("channel_id","seq" desc);--> statement-breakpoint
-CREATE INDEX "messages_thread_idx" ON "mod_chat"."messages" USING btree ("thread_root_id","seq") WHERE thread_root_id is not null;--> statement-breakpoint
-CREATE INDEX "messages_ws_created_idx" ON "mod_chat"."messages" USING btree ("workspace_id","created_at");--> statement-breakpoint
-CREATE INDEX "messages_channel_pinned_idx" ON "mod_chat"."messages" USING btree ("channel_id") WHERE pinned;--> statement-breakpoint
-CREATE INDEX "messages_search_idx" ON "mod_chat"."messages" USING gin ("search");--> statement-breakpoint
-CREATE INDEX "pins_channel_idx" ON "mod_chat"."pins" USING btree ("channel_id","created_at");--> statement-breakpoint
-CREATE UNIQUE INDEX "section_channels_user_channel_uq" ON "mod_chat"."section_channels" USING btree ("user_id","channel_id");--> statement-breakpoint
-CREATE INDEX "thread_participants_ws_user_idx" ON "mod_chat"."thread_participants" USING btree ("workspace_id","user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "webhooks_token_uq" ON "mod_chat"."webhooks" USING btree ("token_hash");
+CREATE INDEX IF NOT EXISTS "bookmarks_ws_user_idx" ON "mod_chat"."bookmarks" USING btree ("workspace_id","user_id","created_at");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "channel_members_ws_user_idx" ON "mod_chat"."channel_members" USING btree ("workspace_id","user_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "channel_sections_ws_user_idx" ON "mod_chat"."channel_sections" USING btree ("workspace_id","user_id","position");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "channels_ws_slug_uq" ON "mod_chat"."channels" USING btree ("workspace_id","slug") WHERE slug is not null;--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "channels_ws_dmkey_uq" ON "mod_chat"."channels" USING btree ("workspace_id","dm_key") WHERE dm_key is not null;--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "channels_ws_object_uq" ON "mod_chat"."channels" USING btree ("workspace_id","object_module","object_type","object_id") WHERE object_id is not null;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "channels_ws_type_idx" ON "mod_chat"."channels" USING btree ("workspace_id","type","archived_at");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "favorites_ws_user_idx" ON "mod_chat"."favorites" USING btree ("workspace_id","user_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "messages_channel_seq_uq" ON "mod_chat"."messages" USING btree ("channel_id","seq" desc);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "messages_thread_idx" ON "mod_chat"."messages" USING btree ("thread_root_id","seq") WHERE thread_root_id is not null;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "messages_ws_created_idx" ON "mod_chat"."messages" USING btree ("workspace_id","created_at");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "messages_channel_pinned_idx" ON "mod_chat"."messages" USING btree ("channel_id") WHERE pinned;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "messages_search_idx" ON "mod_chat"."messages" USING gin ("search");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "pins_channel_idx" ON "mod_chat"."pins" USING btree ("channel_id","created_at");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "section_channels_user_channel_uq" ON "mod_chat"."section_channels" USING btree ("user_id","channel_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "thread_participants_ws_user_idx" ON "mod_chat"."thread_participants" USING btree ("workspace_id","user_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "webhooks_token_uq" ON "mod_chat"."webhooks" USING btree ("token_hash");
 --> statement-breakpoint
 -- Row-level security: every tenant table is isolated by workspace_id. The chat service sets
 -- `app.workspace_id` per transaction; the sentinel '*' allows service-internal cross-workspace
@@ -157,6 +157,7 @@ ALTER TABLE "mod_chat"."channels" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."channels" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "channels_ws_isolation" ON "mod_chat"."channels";--> statement-breakpoint
 CREATE POLICY "channels_ws_isolation" ON "mod_chat"."channels"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -165,6 +166,7 @@ ALTER TABLE "mod_chat"."channel_members" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."channel_members" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "channel_members_ws_isolation" ON "mod_chat"."channel_members";--> statement-breakpoint
 CREATE POLICY "channel_members_ws_isolation" ON "mod_chat"."channel_members"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -173,6 +175,7 @@ ALTER TABLE "mod_chat"."channel_sections" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."channel_sections" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "channel_sections_ws_isolation" ON "mod_chat"."channel_sections";--> statement-breakpoint
 CREATE POLICY "channel_sections_ws_isolation" ON "mod_chat"."channel_sections"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -181,6 +184,7 @@ ALTER TABLE "mod_chat"."section_channels" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."section_channels" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "section_channels_ws_isolation" ON "mod_chat"."section_channels";--> statement-breakpoint
 CREATE POLICY "section_channels_ws_isolation" ON "mod_chat"."section_channels"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -189,6 +193,7 @@ ALTER TABLE "mod_chat"."favorites" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."favorites" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "favorites_ws_isolation" ON "mod_chat"."favorites";--> statement-breakpoint
 CREATE POLICY "favorites_ws_isolation" ON "mod_chat"."favorites"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -197,6 +202,7 @@ ALTER TABLE "mod_chat"."messages" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."messages" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "messages_ws_isolation" ON "mod_chat"."messages";--> statement-breakpoint
 CREATE POLICY "messages_ws_isolation" ON "mod_chat"."messages"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -205,6 +211,7 @@ ALTER TABLE "mod_chat"."message_reactions" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."message_reactions" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "message_reactions_ws_isolation" ON "mod_chat"."message_reactions";--> statement-breakpoint
 CREATE POLICY "message_reactions_ws_isolation" ON "mod_chat"."message_reactions"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -213,6 +220,7 @@ ALTER TABLE "mod_chat"."thread_participants" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."thread_participants" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "thread_participants_ws_isolation" ON "mod_chat"."thread_participants";--> statement-breakpoint
 CREATE POLICY "thread_participants_ws_isolation" ON "mod_chat"."thread_participants"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -221,6 +229,7 @@ ALTER TABLE "mod_chat"."pins" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."pins" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "pins_ws_isolation" ON "mod_chat"."pins";--> statement-breakpoint
 CREATE POLICY "pins_ws_isolation" ON "mod_chat"."pins"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -229,6 +238,7 @@ ALTER TABLE "mod_chat"."bookmarks" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."bookmarks" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "bookmarks_ws_isolation" ON "mod_chat"."bookmarks";--> statement-breakpoint
 CREATE POLICY "bookmarks_ws_isolation" ON "mod_chat"."bookmarks"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
@@ -237,6 +247,7 @@ ALTER TABLE "mod_chat"."webhooks" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE "mod_chat"."webhooks" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+DROP POLICY IF EXISTS "webhooks_ws_isolation" ON "mod_chat"."webhooks";--> statement-breakpoint
 CREATE POLICY "webhooks_ws_isolation" ON "mod_chat"."webhooks"
   USING (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true))
   WITH CHECK (current_setting('app.workspace_id', true) = '*' OR workspace_id::text = current_setting('app.workspace_id', true));
