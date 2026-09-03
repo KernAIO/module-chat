@@ -46,7 +46,7 @@ export const chatClientModule = defineClientModule({
           kind: 'number',
           key: 'limit',
           get label() {
-            return t('widget_setting_rows')
+            return t('common.setting_rows')
           },
           default: 6,
           min: 3,
