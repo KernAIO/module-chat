@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.4.16
+
+### Patch Changes
+
+- chore(deps): take @kernhq/testing ^0.1.12, which has permissionMatrixDiff
+
 ## 0.4.15
 
 ### Patch Changes
