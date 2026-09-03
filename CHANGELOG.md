@@ -1,5 +1,12 @@
 # @kernhq/module-chat
 
+## 0.4.14
+
+### Patch Changes
+
+- 435c8bb: The chat widget's "Rows" setting shows its label again instead of a raw message key; it now reads
+  the shared `common.setting_rows` string like every other widget.
+
 ## 0.4.13
 
 ### Patch Changes
