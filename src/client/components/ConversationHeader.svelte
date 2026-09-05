@@ -82,16 +82,6 @@ const subtitle = $derived(isDm ? (channel.topic ?? '') : t('members_count', { co
     <AvatarStack people={members} size={24} max={4} />
   {/if}
 
-  <Button
-    variant="secondary"
-    size="sm"
-    icon="video"
-    disabled
-    title={t('huddle_soon')}
-  >
-    {t('huddle')}
-  </Button>
-
   <IconButton
     icon="bookmark"
     label={t('pinned_messages')}
