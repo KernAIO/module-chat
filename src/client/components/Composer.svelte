@@ -443,13 +443,19 @@ function onkeydown(event: KeyboardEvent) {
         data-testid="attach-button"
       />
 
+      <!--
+        A browser that cannot record leaves these enabled on purpose. Disabling them said nothing:
+        a disabled button is out of the tab order and takes no pointer events, so the reason reached
+        nobody. Pressing one now opens the recorder bar on its "this browser cannot record" message,
+        which a keyboard and a screen reader can both reach.
+      -->
       <IconButton
         icon="mic"
         label={t('record_voice')}
         size={26}
         variant="ghost"
         radius={5}
-        disabled={!allowed || !recorder.supported}
+        disabled={!allowed}
         onclick={() => startRecording('audio')}
         data-testid="record-voice"
       />
@@ -460,7 +466,7 @@ function onkeydown(event: KeyboardEvent) {
         size={26}
         variant="ghost"
         radius={5}
-        disabled={!allowed || !recorder.supported}
+        disabled={!allowed}
         onclick={() => startRecording('video')}
         data-testid="record-video"
       />
