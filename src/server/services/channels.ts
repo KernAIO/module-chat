@@ -1,4 +1,4 @@
-import type { ObjectRef, Principal } from '@kernhq/contracts'
+import type { EntityChange, ObjectRef, Principal } from '@kernhq/contracts'
 import { channel as rtChannel } from '@kernhq/contracts'
 import { KernError, type Kernel, type Tx, uuidv7 } from '@kernhq/kernel'
 import { and, asc, desc, eq, ilike, inArray, isNull, sql } from 'drizzle-orm'
@@ -450,7 +450,9 @@ export class ChannelService {
       workspaceId,
       change: { module: MODULE_ID, entity: 'channel', id: channelId, op: 'updated', patch: ch },
     } as never)
-    await this.kernel.realtime.change(workspaceId, {
+    // A sidebar hides an archived channel without being told to look again, so the change has to
+    // reach members who are not subscribed to `chat:<id>` — but only its members.
+    await this.announceToAudience(workspaceId, row.type, channelId, {
       module: MODULE_ID,
       entity: 'channel',
       id: channelId,
@@ -1285,18 +1287,38 @@ export class ChannelService {
       op,
       patch: view as unknown as Record<string, unknown>,
     } as const
-    if (view.type === 'public') await this.kernel.realtime.change(view.workspaceId, change)
-    else {
-      const members =
-        view.type === 'dm' || view.type === 'group_dm'
-          ? view.dmUserIds
-          : await withWs(this.kernel, view.workspaceId, (tx) => this.memberIds(tx, view.id))
-      await this.kernel.realtime.toUsers(members, {
-        t: 'change',
-        workspaceId: view.workspaceId,
-        change,
-      } as never)
+    await this.announceToAudience(
+      view.workspaceId,
+      view.type,
+      view.id,
+      change,
+      view.type === 'dm' || view.type === 'group_dm' ? view.dmUserIds : undefined,
+    )
+  }
+
+  /**
+   * Tell the people entitled to know a channel exists that something about it changed.
+   *
+   * `realtime.change` publishes on the workspace channel, and a socket subscribes to that for every
+   * workspace it belongs to the moment it authenticates — right for a public channel, a disclosure
+   * for any other kind. Announcing a private channel there tells everybody in the workspace that it
+   * exists and what just happened to it, whether or not they may open it. Anything but public
+   * therefore goes to its own members, by id.
+   */
+  private async announceToAudience(
+    workspaceId: string,
+    type: string,
+    channelId: string,
+    change: EntityChange,
+    knownMembers?: string[],
+  ) {
+    if (type === 'public') {
+      await this.kernel.realtime.change(workspaceId, change)
+      return
     }
+    const members =
+      knownMembers ?? (await withWs(this.kernel, workspaceId, (tx) => this.memberIds(tx, channelId)))
+    await this.kernel.realtime.toUsers(members, { t: 'change', workspaceId, change } as never)
   }
 }
 
