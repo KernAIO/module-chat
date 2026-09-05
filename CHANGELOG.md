@@ -1,5 +1,49 @@
 # @kernhq/module-chat
 
+## 0.5.0
+
+### Minor Changes
+
+- ca447a2: Incoming webhooks are gone: the `chat.webhooks.incoming` procedure, the `POST
+/api/chat/webhooks/{token}` route and the `mod_chat.webhooks` table. Nothing could ever create a
+  token — the only thing that ever named a `chat.webhooks.create` procedure was the comment above the
+  table, written in the commit that added it — so there was no procedure, no insert and no screen, and
+  the endpoint could only ever answer 404 against a permanently empty table. It was a feature nobody
+  could turn on, advertised in the module's OpenAPI document (38 paths before, 37 after). Dropping the
+  table loses no data on any instance, and `0001_drop_webhooks.sql` is guarded with `if exists` so the
+  folder still survives a replay. Incoming webhooks can come back as a real feature — create, list and
+  revoke, with a screen to manage the tokens.
+
+### Patch Changes
+
+- c892f45: The conversation header no longer carries a Huddle button. Calls are not built, so the button was
+  permanently disabled on the busiest screen in the product — in every channel and every direct
+  message, for everybody — and its only explanation was a `title` on a natively disabled button,
+  which nothing can reach: a disabled button is out of the tab order and receives no pointer events,
+  so neither a keyboard nor a screen reader nor a hover ever got the reason. It comes back when calls
+  do.
+- 02bae7a: The command palette's "New channel" opens the dialog. It runs `/chat?new=1`, because a command can
+  only navigate — and nothing read that parameter, so the command moved you to the chat page and
+  stopped there. The sidebar consumes it now and puts the URL back without it, so running the command
+  again after closing the dialog opens it again.
+- 9f8a3d7: Peer and develop against `@kernhq/kernel` ^0.10.0. A caret on 0.x does not cross a minor, so the
+  previous `^0.9.1` could no longer reach the published framework — invisible locally, where the
+  workspace copy is linked, and a lint failure in CI, which installs from the registry.
+- 1100063: Archiving a private channel no longer announces it to the whole workspace. `realtime.change`
+  publishes on the workspace channel, which every socket subscribes to for every workspace it belongs
+  to the moment it authenticates — so archiving or restoring a private, object or group channel told
+  everybody in the workspace that the channel exists and what had just happened to it, whether or not
+  they may open it. The change now goes to the channel's own members, the same audience a private
+  channel's creation already used, and `announce.test.ts` asserts the frames.
+- b4a1a17: The composer's voice and video buttons say why they cannot record. They were disabled whenever the
+  browser has no `MediaRecorder` — which is also every instance served over plain HTTP, where
+  `navigator.mediaDevices` is absent — and a disabled button explains nothing to a pointer, a keyboard
+  or a screen reader. Pressing one now opens the recorder bar on its "this browser cannot record"
+  message, which was written and translated but could never be reached.
+- 800cdb2: A row in the unread-chat widget opens its conversation. It linked to `/<ws>/chat?channel=<id>`
+  while the chat page reads `?c=`, so every row on the dashboard landed on chat with nothing selected
+  and the "pick a conversation" empty state.
+
 ## 0.4.16
 
 ### Patch Changes
