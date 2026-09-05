@@ -273,21 +273,6 @@ export const chatContract = {
         z.object({ handled: z.boolean(), ephemeral: z.string().nullable(), message: Message.nullable() }),
       ),
   },
-
-  /** incoming webhooks: POST /api/chat/webhooks/{token} with `{ text }` posts into the bound channel (TODO: token management UI) */
-  webhooks: {
-    incoming: baseContract
-      .route({ method: 'POST', path: '/webhooks/{token}', ...t('webhooks') })
-      .input(
-        z.object({
-          token: z.string(),
-          text: z.string().min(1).max(4000),
-          username: z.string().max(80).optional(),
-          iconUrl: z.string().url().optional(),
-        }),
-      )
-      .output(ok),
-  },
 }
 export type ChatContract = typeof chatContract
 

@@ -213,23 +213,6 @@ export const bookmarks = schema.table(
   ],
 )
 
-/** Incoming webhook tokens bound to a channel (management UI is a TODO; rows are created via `chat.webhooks.create` procedure). */
-export const webhooks = schema.table(
-  'webhooks',
-  {
-    id: uuid('id').primaryKey(),
-    workspaceId: uuid('workspace_id').notNull(),
-    channelId: uuid('channel_id').notNull(),
-    /** sha256 of the secret token */
-    tokenHash: text('token_hash').notNull(),
-    name: text('name').notNull(),
-    createdBy: uuid('created_by').notNull(),
-    createdAt: ts('created_at').notNull().defaultNow(),
-    revokedAt: ts('revoked_at'),
-  },
-  (t) => [uniqueIndex('webhooks_token_uq').on(t.tokenHash)],
-)
-
 export const TENANT_TABLES = [
   'channels',
   'channel_members',
@@ -241,5 +224,4 @@ export const TENANT_TABLES = [
   'thread_participants',
   'pins',
   'bookmarks',
-  'webhooks',
 ] as const

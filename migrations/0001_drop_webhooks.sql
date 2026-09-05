@@ -1,0 +1,15 @@
+-- Drop `mod_chat.webhooks`.
+--
+-- The table held tokens for incoming webhooks and no row was ever written to it: the only thing
+-- that ever named a `chat.webhooks.create` procedure was the comment above the table, from the
+-- commit that created it. There has never been a procedure, an insert or a screen, so
+-- `POST /api/chat/webhooks/{token}` could only ever answer 404 — a feature nobody could turn on.
+-- The endpoint and the table go together; the website has already stopped advertising them.
+--
+-- Dropping is safe for a rollback even though the release before this one still selects from the
+-- table: that select belongs to the same permanently-404ing endpoint, nothing touches the table at
+-- boot, and the table is empty on every instance, so no data is lost and no image fails to start.
+--
+-- `if exists` is what makes the folder replayable — a module migration that throws takes the whole
+-- host service down with it, not just chat.
+DROP TABLE IF EXISTS "mod_chat"."webhooks" CASCADE;

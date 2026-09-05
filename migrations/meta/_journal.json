@@ -8,6 +8,13 @@
       "when": 1787348828784,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788631918377,
+      "tag": "0001_drop_webhooks",
+      "breakpoints": true
     }
   ]
 }

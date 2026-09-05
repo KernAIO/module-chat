@@ -1,20 +1,15 @@
-import { createHash } from 'node:crypto'
 import { KernError, type Kernel, type RequestContext, requires, workspaceScoped } from '@kernhq/kernel'
 import { implement } from '@orpc/server'
-import { and, eq, isNull } from 'drizzle-orm'
 import { chatContract, MODULE_ID } from '../contract/index.js'
-import { webhooks } from './schema.js'
-import { withAll } from './services/db.js'
 import { chatServices } from './services/index.js'
 
 const os = implement(chatContract).$context<RequestContext>()
-// everything except `webhooks` takes `workspaceId` and runs behind the workspace/module gate
-const { webhooks: webhookContract, ...workspaceContract } = chatContract
 
 /** oRPC router for `/api/chat`. Thin: all logic lives in the services. */
 export function chatRouter(kernel: Kernel) {
   const svc = chatServices(kernel)
-  const scoped = implement(workspaceContract).$context<RequestContext>().use(workspaceScoped(MODULE_ID))
+  // every procedure takes `workspaceId` and runs behind the workspace/module gate
+  const scoped = implement(chatContract).$context<RequestContext>().use(workspaceScoped(MODULE_ID))
   const uid = (ctx: RequestContext) => {
     if (!ctx.principal.userId) throw KernError.unauthorized()
     return ctx.principal.userId
@@ -271,30 +266,6 @@ export function chatRouter(kernel: Kernel) {
           default:
             return { handled: false, ephemeral: `Unknown command /${cmd}`, message: null }
         }
-      }),
-    },
-
-    webhooks: {
-      incoming: os.webhooks.incoming.handler(async ({ input }) => {
-        const tokenHash = createHash('sha256').update(input.token).digest('hex')
-        const [hook] = await withAll(kernel, (tx) =>
-          tx
-            .select()
-            .from(webhooks)
-            .where(and(eq(webhooks.tokenHash, tokenHash), isNull(webhooks.revokedAt)))
-            .limit(1),
-        )
-        if (!hook) throw KernError.notFound('Webhook')
-        await svc.messages.postAsBot({
-          workspaceId: hook.workspaceId,
-          channelId: hook.channelId,
-          text: input.text,
-          botName: input.username ?? hook.name,
-          iconUrl: input.iconUrl ?? null,
-          kind: 'webhook',
-          metadata: { webhookId: hook.id },
-        })
-        return { ok: true as const }
       }),
     },
   })
