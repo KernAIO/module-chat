@@ -82,7 +82,8 @@ const markRead = createMutation(() => ({
   <ul>
     {#each rows as row (row.channelId)}
       <li>
-        <a class="row" href="/{workspaceSlug}/chat?channel={row.channelId}">
+        <!-- `?c=` is what the chat page reads; `?channel=` opened chat with nothing selected -->
+        <a class="row" href="/{workspaceSlug}/chat?c={encodeURIComponent(row.channelId)}">
           <Icon
             name={row.channel?.type === 'public'
               ? 'hash'
