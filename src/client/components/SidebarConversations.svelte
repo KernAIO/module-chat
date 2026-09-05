@@ -48,6 +48,25 @@ let newChannelOpen = $state(false)
 const searching = $derived(search.trim().length > 0)
 
 /**
+ * The command palette can only navigate, so its "New channel" command asks for `/chat?new=1` — and
+ * nothing read that parameter, which made the command open a page and nothing else. The parameter
+ * is consumed here: the dialog opens and the URL is put back without it (replacing the entry rather
+ * than adding one), so running the command again after closing the dialog opens it again.
+ */
+$effect(() => {
+  if (navigation.search.new !== '1') return
+  newChannelOpen = true
+  const params = new URLSearchParams(navigation.search)
+  params.delete('new')
+  const query = params.toString()
+  void navigation.go(`/${workspaceSlug}/chat${query ? `?${query}` : ''}`, {
+    replaceState: true,
+    keepFocus: true,
+    noScroll: true,
+  })
+})
+
+/**
  * `SearchBox` clears itself — the ✕ button and Escape both write to `value` directly. Binding is
  * therefore the only way to hear about it; passing the value one-way left the results on screen
  * after the box was already empty.
