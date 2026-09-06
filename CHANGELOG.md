@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.6.1
+
+### Patch Changes
+
+- chore(renovate): drop dead @kernhq automerge rule
+
 ## 0.6.0
 
 ### Minor Changes
