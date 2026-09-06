@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.5.2
+
+### Patch Changes
+
+- build(deps): raise @kernhq/testing to ^0.1.14
+
 ## 0.5.1
 
 ### Patch Changes
