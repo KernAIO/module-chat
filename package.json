@@ -45,6 +45,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit && svelte-check --tsconfig ./tsconfig.client.json --threshold error",
     "lint": "biome check . && node scripts/check-ranges.mjs package.json",
+    "check:pack": "node scripts/check-pack.mjs",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "format": "biome check --write .",
