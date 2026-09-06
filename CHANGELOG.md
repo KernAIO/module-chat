@@ -1,5 +1,11 @@
 # @kernhq/module-chat
 
+## 0.5.3
+
+### Patch Changes
+
+- build: force one @kernhq/kernel copy with pnpm.overrides
+
 ## 0.5.2
 
 ### Patch Changes
