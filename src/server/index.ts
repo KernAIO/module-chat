@@ -13,6 +13,7 @@ import {
   Message,
   MODULE_ID,
 } from '../contract/index.js'
+import { seedChatDemo } from './demo.js'
 import { readPresence } from './presence.js'
 import { preview } from './rich.js'
 import { chatRouter } from './router.js'
@@ -49,6 +50,8 @@ export const chatModule = defineServerModule({
   schema,
   migrationsFolder: join(dirname(fileURLToPath(import.meta.url)), '../../migrations'),
   router: chatRouter,
+
+  demo: { seed: seedChatDemo },
 
   subscriptions: {
     /** every new workspace gets #general (auto-join) and #random */
